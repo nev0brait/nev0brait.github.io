@@ -1,0 +1,33 @@
+{
+  "project": "NEVOBRAIT",
+  "status": "COMPROMISED",
+  "last_update": "2026-10-27T23:59:00Z",
+  "entities": [
+    {
+      "id": "ADK-001",
+      "name": "Адкинатор",
+      "class": "Digital Cryptid",
+      "threat": "EXTREME",
+      "status": "ACTIVE",
+      "known_domains": ["adkinator666.xyz", "adkinator666.ru"],
+      "notes": "Способен считывать данные пользователя. Не использует API."
+    },
+    {
+      "id": "DW-002",
+      "name": "Тёмная Волна",
+      "class": "Cyclic Anomaly",
+      "threat": "UNKNOWN",
+      "status": "CYCLIC",
+      "peaks": ["2006", "2011", "2018-2019"],
+      "notes": "Следующая фаза неизвестна. Влияет на реальность."
+    },
+    {
+      "id": "MM-003",
+      "name": "Полуночный Человек",
+      "class": "Entity",
+      "threat": "EXTREME",
+      "status": "OBSERVING",
+      "notes": "Не атакует напрямую. Появляется в 00:00. Не смотреть в окно."
+    }
+  ]
+}
