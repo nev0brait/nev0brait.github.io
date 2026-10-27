@@ -1,0 +1,13 @@
+/* TEAM */
+Разработчик: Nevobrait
+Сайт: https://nev0brait.github.io
+Telegram: @nevobrait
+
+/* SITE */
+Стандарты: HTML5, CSS3, JavaScript
+Язык: Русский
+Технологии: React, Vite, Tailwind CSS
+Время последнего обновления: 2026
+
+/* THANKS */
+Всем, кто не побоялся заглянуть в архив.
