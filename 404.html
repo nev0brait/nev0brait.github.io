@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Сектор не найден</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap');
+        body { 
+            background: #0b0d0e; 
+            color: #c23c35; 
+            font-family: 'Share Tech Mono', monospace; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            flex-direction: column; 
+            text-align: center;
+            overflow: hidden;
+        }
+        h1 { 
+            font-family: 'Orbitron', sans-serif;
+            font-size: 6rem; 
+            margin: 0;
+            text-shadow: 0 0 20px #c23c35;
+            animation: glitch 0.2s infinite;
+        }
+        p { font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 30px; }
+        a { 
+            color: #fff; 
+            text-decoration: none; 
+            border: 1px solid #c23c35; 
+            padding: 12px 24px; 
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            background: rgba(194, 60, 53, 0.1);
+        }
+        a:hover { 
+            background: #c23c35; 
+            box-shadow: 0 0 15px #c23c35;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+    </style>
+</head>
+<body>
+    <h1>404</h1>
+    <p>СЕКТОР НЕ НАЙДЕН. ДОСТУП ЗАПРЕЩЕН.</p>
+    <a href="/">ВЕРНУТЬСЯ В АРХИВ</a>
+</body>
+</html>
