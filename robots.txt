@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nev0brait.github.io/sitemap.xml
