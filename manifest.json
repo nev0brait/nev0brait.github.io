@@ -1,0 +1,16 @@
+{
+  "name": "NEVOBRAIT - Секретная база",
+  "short_name": "NEVOBRAIT",
+  "description": "Паранормальные расследования и архив криптидов.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0d0e",
+  "theme_color": "#c23c35",
+  "icons": [
+    {
+      "src": "https://github.com/nev0brait.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
