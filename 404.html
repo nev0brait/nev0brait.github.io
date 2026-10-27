@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 — СБОЙ СИСТЕМЫ // NEVOBRAIT</title>
-    <meta http-equiv="refresh" content="7;url=https://nev0brait.github.io/">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&display=swap');
@@ -31,7 +30,7 @@
             position: relative;
         }
 
-        /* Матричный дождь (Canvas) */
+        /* Матричный дождь */
         canvas {
             position: fixed;
             top: 0;
@@ -43,7 +42,7 @@
             pointer-events: none;
         }
 
-        /* Эффект CRT-монитора */
+        /* Эффект CRT-монитора + мерцание */
         .scanlines {
             position: fixed;
             top: 0;
@@ -54,6 +53,12 @@
             background-size: 100% 4px, 6px 100%;
             z-index: 10;
             pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.95; }
+            100% { opacity: 1; }
         }
 
         /* Контент */
@@ -62,9 +67,10 @@
             z-index: 5;
             text-align: center;
             max-width: 800px;
-            padding: 20px;
+            width: 90%;
+            padding: 30px;
             border: 1px solid rgba(194, 60, 53, 0.3);
-            background: rgba(11, 13, 14, 0.8);
+            background: rgba(11, 13, 14, 0.85);
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(194, 60, 53, 0.1);
             backdrop-filter: blur(2px);
         }
@@ -96,12 +102,15 @@
         .system-log {
             text-align: left;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: #555;
+            font-size: 0.85rem;
+            color: #666;
             margin-bottom: 30px;
-            line-height: 1.5;
+            line-height: 1.6;
+            min-height: 90px; /* Чтобы текст не прыгал */
         }
-        .system-log span { color: var(--red); }
+        .system-log span { color: var(--red); font-weight: bold; }
+        .cursor { display: inline-block; width: 8px; height: 14px; background: var(--red); animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 5px;}
+        @keyframes blink { 50% { opacity: 0; } }
 
         .btn {
             display: inline-block;
@@ -118,20 +127,27 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
+        
+        /* Эффект сканирования на кнопке */
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::after { left: 100%; }
         
         .btn:hover {
             background: var(--red);
             box-shadow: 0 0 20px var(--red);
             text-shadow: 0 0 5px #fff;
-        }
-
-        .timer {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         /* Анимация глитча */
@@ -142,6 +158,11 @@
             60% { transform: translate(3px, 2px) }
             80% { transform: translate(3px, -2px) }
             100% { transform: translate(0) }
+        }
+        
+        @media (max-width: 600px) {
+            .error-code { font-size: 5rem; }
+            .content { padding: 20px 15px; }
         }
     </style>
 </head>
@@ -155,16 +176,11 @@
         
         <div class="error-msg">СЕКТОР НЕ НАЙДЕН. ДОСТУП ЗАПРЕЩЕН.</div>
 
-        <div class="system-log">
-            > ЗАПРОС К СЕКТОРУ: <span id="url-path"></span><br>
-            > СТАТУС: <span>ОТКАЗАНО</span><br>
-            > ПРИЧИНА: <span>ДАННЫЕ УНИЧТОЖЕНЫ ИЛИ ПОВРЕЖДЕНЫ</span><br>
-            > РЕКОМЕНДАЦИЯ: <span>НЕМЕДЛЕННО ПОКИНУТЬ УЗЕЛ</span>
+        <div class="system-log" id="log">
+            <!-- Тут будет печататься текст -->
         </div>
 
         <a href="https://nev0brait.github.io/" class="btn">ВЕРНУТЬСЯ В АРХИВ</a>
-
-        <div class="timer">АВТОМАТИЧЕСКАЯ ЭВАКУАЦИЯ ЧЕРЕЗ <span id="countdown">7</span> СЕКУНД...</div>
     </div>
 
     <script>
@@ -207,19 +223,67 @@
             canvas.height = window.innerHeight;
         });
 
-        // 2. Вывод "битого" URL
+        // 2. Эффект печатной машинки для лога
+        const logElement = document.getElementById('log');
         const path = window.location.pathname;
-        document.getElementById('url-path').textContent = path;
-
-        // 3. Таймер обратного отсчета
-        let timeLeft = 7;
-        const countdownElement = document.getElementById('countdown');
         
-        const timer = setInterval(() => {
-            timeLeft--;
-            countdownElement.textContent = timeLeft;
-            if (timeLeft <= 0) clearInterval(timer);
-        }, 1000);
+        const logs = [
+            `> ЗАПРОС К СЕКТОРУ: <span>${path}</span>`,
+            `> СТАТУС: <span>ОТКАЗАНО</span>`,
+            `> ПРИЧИНА: <span>ДАННЫЕ УНИЧТОЖЕНЫ ИЛИ ПОВРЕЖДЕНЫ</span>`,
+            `> РЕКОМЕНДАЦИЯ: <span>НЕМЕДЛЕННО ПОКИНУТЬ УЗЕЛ</span>`
+        ];
+
+        let currentLine = 0;
+        let currentChar = 0;
+
+        function typeLog() {
+            if (currentLine < logs.length) {
+                const line = logs[currentLine];
+                // Если это первый символ строки, создаем новый div
+                if (currentChar === 0) {
+                    logElement.innerHTML += `<div id="line-${currentLine}"></div>`;
+                }
+                
+                const targetDiv = document.getElementById(`line-${currentLine}`);
+                // Обрабатываем HTML теги (span) как единое целое
+                // Простое решение: выводим строку посимвольно, но с задержкой
+                // (Для простоты мы просто выведем всю строку с задержкой, так как парсить HTML посимвольно сложно)
+                
+                targetDiv.innerHTML = line;
+                currentLine++;
+                
+                setTimeout(typeLog, 600); // Пауза между строками
+            } else {
+                // Добавляем мигающий курсор в конце
+                logElement.innerHTML += '<span class="cursor"></span>';
+            }
+        }
+
+        // Запускаем печать через секунду после загрузки
+        setTimeout(typeLog, 500);
+        
+        // 3. Звук (попытка)
+        // Так как браузеры блокируют звук без клика, мы просто добавим невидимую кнопку
+        // или проиграем звук при первом клике на страницу.
+        document.body.addEventListener('click', function playBeep() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(150, audioCtx.currentTime); // Низкий гул
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime); // Тихо
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+            
+            document.body.removeEventListener('click', playBeep);
+        });
+
     </script>
 </body>
 </html>
